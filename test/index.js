@@ -29,6 +29,9 @@ async function init() {
   console.info('All data from tenant `market2`: ', data);
   const userCesar = await db.people.asyncFindOne({ name: 'Cesar' }, {}, { tenant: 'market3' });
   console.info('userCesar into tenant `market3`: ', userCesar);
+
+  db.people.find()
+    .sort({ _id: 1 });
   await db.close();
 }
 
