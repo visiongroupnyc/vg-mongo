@@ -6,7 +6,6 @@ module.exports = function vgMongo(connString, dbname, options) {
   if (typeof Proxy !== 'undefined') {
     const handler = {
       get: function _get(obj, prop) {
-        // Work around for event emitters to work together with harmony proxy
         if (prop === 'on' || prop === 'emit') {
           return db[prop].bind(db);
         }

@@ -1,7 +1,7 @@
 {
   "name": "vg-mongo",
-  "version": "1.0.0",
-  "description": "This is a MongoDB Client, based on mongodb package",
+  "version": "1.0.1",
+  "description": "This is a MongoDB Client, based on mongojs package, refactored and with Tenants support",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
