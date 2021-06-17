@@ -32,6 +32,9 @@ async function init() {
 
   db.people.find()
     .sort({ _id: 1 });
+
+  const total = await db.people.asyncCount({}, { tenant: 'market2' });
+  console.info(`Total items into collection people tenant market2: ${total}`);
   await db.close();
 }
 

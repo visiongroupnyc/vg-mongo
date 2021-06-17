@@ -2,10 +2,18 @@
 Powered by César Casas (https://www.linkedin.com/in/cesarcasas)
 
 This library support Tenants!.
+
+Using by Universal Pattern (https://www.npmjs.com/package/universal-pattern)
+
 # Install
 ```bash
 $ npm install vg-mongo
 ```
+# Debug
+```bash
+$ DEBUG=universal* node youscript
+```
+---
 
 # Basic example
 ```javascript
