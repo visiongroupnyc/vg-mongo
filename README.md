@@ -1,57 +1,72 @@
-# Vision Group MongoDB Driver
-Powered by César Casas (https://www.linkedin.com/in/cesarcasas)
+# vg-mongo
 
-This library support Tenants!.
+## Description
+**vg-mongo** is a MongoDB client, based on the mongodb package, with pagination support. It offers a simplified interface for interacting with MongoDB, facilitating the implementation of common database functions.
 
-Using by Universal Pattern (https://www.npmjs.com/package/universal-pattern)
+## Features
+- Based on the official MongoDB package for Node.js.
+- Integrated support for pagination.
+- Facilitates access to collections and database operations.
 
-# Install
-```bash
-$ npm install vg-mongo
+## Installation
+To install **vg-mongo**, use npm:
 ```
-# Debug
-```bash
-$ DEBUG=universal* node youscript
+npm install vg-mongo
 ```
----
 
-# Basic example
+## Basic Usage
+To start and use **vg-mongo**:
 ```javascript
 const vgMongo = require('vg-mongo');
 
-const url = 'mongodb://127.0.0.1:27017';
+// Database connection
+const db = await vgMongo('mongodb://localhost:27017', 'myDatabase', { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function init() {
-  console.info('running');
-  const db = await vgMongo(url, 'vgmongo-test');
-  await db.people.asyncRemoveAll();
+// Using a collection
+const myCollection = db.myCollection;
 
-  console.info('Dropping `people` collection');
-  await db.people.asyncDrop();
-  console.info('Creating a new entry into collection people.');
-
-  await db.people.asyncInsert({ name: 'Tito', lastName: 'Mendez' });
-  const inserted = await db.people.asyncFindOne({ name: 'Tito' });
-  console.info('inserted: ', inserted);
-  const tenants = ['market1', 'market2', 'market3'];
-
-  const insertedIntoTenants = tenants.map((tenant) => Promise.all([
-    db.people.asyncInsert({ name: 'Cesar', lastName: 'Casas', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Mauro', lastName: 'Luna', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Valeria', lastName: 'Delgado', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Catherin', lastName: 'Torres', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Gabriel', lastName: 'Casas', tenant }, { tenant }),
-  ]));
-
-  await Promise.all(insertedIntoTenants);
-  const data = await db.people.asyncFind({ }, { }, { tenant: 'market2' });
-  console.info('All data from tenant `market2`: ', data);
-  const userCesar = await db.people.asyncFindOne({ name: 'Cesar' }, {}, { tenant: 'market3' });
-  console.info('userCesar into tenant `market3`: ', userCesar);
-  await db.close();
-}
-
-init();
-
-
+// Closing the connection
+await db.close();
 ```
+
+## Pagination Usage
+The **vg-mongo** library includes an incorporated pagination function:
+
+```javascript
+// Using pagination in a collection
+const query = {}; // Your MongoDB query here
+const fields = {}; // Specific fields you want to retrieve
+const options = {
+    limit: 10, // Number of documents per page
+    page: 1, // Current page number
+    sort: { _id: 1 } // Sort by _id in ascending order
+};
+
+// Get the paginated documents
+const paginatedResults = await myCollection.paginate(query, fields, options);
+
+console.log(paginatedResults);
+```
+
+### Details of the Paginate Function
+- `query`: Search criteria in MongoDB.
+- `fields`: Fields to return in the documents.
+- `options`: Pagination parameters such as `limit`, `page`, and `sort`.
+
+## Tests
+To run tests:
+```
+npm test
+```
+
+## Contributions
+Contributions are welcome. Please check the [open issues](https://github.com/visiongroupnyc/vg-mongo/issues) for reporting bugs or suggesting improvements.
+
+## License
+**vg-mongo** is under the ISC license.
+
+## Relevant Links
+- [GitHub Repository](https://github.com/visiongroupnyc/vg-mongo)
+- [Bug Report](https://github.com/visiongroupnyc/vg-mongo/issues)
+- [Homepage](https://github.com/visiongroupnyc/vg-mongo#readme)
+

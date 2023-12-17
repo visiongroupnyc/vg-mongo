@@ -1,14 +1,23 @@
 const {
 	MongoClient,
-	ObjectID,
+	ObjectId,
 	Binary,
 	Code,
+	DBRef,
+	Double,
+	Int32,
+	Long,
+	MaxKey,
+	MinKey,
+	Timestamp,
+	Decimal128,
 } = require('mongodb');
 const debug = require('debug')('vg-mongo');
 
-// const Database = require('./lib/database');
+const paginate = require('./libs/paginate');
 
 let db = null;
+
 module.exports = async function vgMongo(connString, dbname, options) {
 	debug('vgMongo called: ', connString, dbname, options);
 	const client = new MongoClient(connString, options);
@@ -22,16 +31,21 @@ module.exports = async function vgMongo(connString, dbname, options) {
 	if (typeof Proxy !== 'undefined') {
 		const handler = {
 			get: function _get(obj, prop) {
-				console.info('get:: _get: ', obj, prop);
 				if (prop === 'on' || prop === 'emit') {
 					const collection = db.collection(prop);
 					return collection.bind(db);
 				}
 
-				if (db[prop]) return db[prop];
-				if (typeof prop === 'symbol') return db[prop];
+				if (db[prop]) {
+					return db[prop];
+				}
+
+				if (typeof prop === 'symbol') {
+					return db[prop];
+				}
 
 				db[prop] = db.collection(prop);
+				db[prop].paginate = paginate(db[prop]);
 				return db[prop];
 			},
 		};
@@ -41,11 +55,17 @@ module.exports = async function vgMongo(connString, dbname, options) {
 	return db;
 };
 
-// expose bson stuff visible in the shell
-
 module.exports.Binary = Binary;
 module.exports.Code = Code;
-module.exports.ObjectId = ObjectID;
-module.exports.ObjectID = ObjectID;
-
+module.exports.ObjectId = ObjectId;
+module.exports.DBRef = DBRef;
+module.exports.Double = Double;
+module.exports.Int32 = Int32;
+module.exports.Long = Long;
+module.exports.MaxKey = MaxKey;
+module.exports.MinKey = MinKey;
+module.exports.Symbol = Symbol;
+module.exports.Timestamp = Timestamp;
+module.exports.Map = Map;
+module.exports.Decimal128 = Decimal128;
 module.exports.default = module.exports;
