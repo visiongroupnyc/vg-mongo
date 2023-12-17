@@ -1,41 +1,38 @@
 const vgMongo = require('../index');
+const { ObjectId } = require('../index');
 
 const url = 'mongodb://127.0.0.1:27017';
 
 async function init() {
-  console.info('running');
-  const db = await vgMongo(url, 'vgmongo-test');
-  await db.people.asyncRemoveAll();
+	const db = await vgMongo(url, 'vgmongo');
+	await db.people.deleteMany({});
 
-  console.info('Dropping `people` collection');
-  await db.people.asyncDrop();
-  console.info('Creating a new entry into collection people.');
+	console.info('Dropping `people` collection');
+	await db.people.drop();
 
-  await db.people.asyncInsert({ name: 'Tito', lastName: 'Mendez' });
-  const inserted = await db.people.asyncFindOne({ name: 'Tito' });
-  console.info('inserted: ', inserted);
-  const tenants = ['market1', 'market2', 'market3'];
+	console.info('Creating a new entry into collection people.');
 
-  const insertedIntoTenants = tenants.map((tenant) => Promise.all([
-    db.people.asyncInsert({ name: 'Cesar', lastName: 'Casas', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Mauro', lastName: 'Luna', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Valeria', lastName: 'Delgado', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Catherin', lastName: 'Torres', tenant }, { tenant }),
-    db.people.asyncInsert({ name: 'Gabriel', lastName: 'Casas', tenant }, { tenant }),
-  ]));
+	await db.people.insertOne({ name: 'Tito', lastName: 'Mendez' });
+	const inserted = await db.people.findOne({ name: 'Tito' });
+	console.info('inserted: ', inserted);
 
-  await Promise.all(insertedIntoTenants);
-  const data = await db.people.asyncFind({ }, { }, { tenant: 'market2' });
-  console.info('All data from tenant `market2`: ', data);
-  const userCesar = await db.people.asyncFindOne({ name: 'Cesar' }, {}, { tenant: 'market3' });
-  console.info('userCesar into tenant `market3`: ', userCesar);
+	const inserted2 = await db.people.insertOne({ name: 'Cesar', lastName: 'Casas' });
+	await db.people.insertOne({ name: 'Mauro', lastName: 'Luna' });
+	await db.people.insertOne({ name: 'Valeria', lastName: 'Delgado' });
+	await db.people.insertOne({ name: 'Catherin', lastName: 'Torres' });
+	await db.people.insertOne({ name: 'Gabriel', lastName: 'Casas' });
 
-  db.people.find()
-    .sort({ _id: 1 });
+	console.info('inserted2: ', inserted2, String(inserted2.insertedId));
+	await db.people.findOne({ _id: new ObjectId(String(inserted2.insertedId)) });
+	const dataset = await db.people.find({ }, { }).toArray();
+	console.info('All data: ', dataset);
 
-  const total = await db.people.asyncCount({}, { tenant: 'market2' });
-  console.info(`Total items into collection people tenant market2: ${total}`);
-  await db.close();
+	const total = await db.people.count({});
+	console.info(`Total items into collection people: ${total}`);
+
+	const result = await db.people.paginate({}, {}, { limit: 2, page: 2 });
+	console.info('paginate result: ', result);
+	await db.close();
 }
 
 init();

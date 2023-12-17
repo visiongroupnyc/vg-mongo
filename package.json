@@ -1,7 +1,7 @@
 {
   "name": "vg-mongo",
-  "version": "1.0.7",
-  "description": "This is a MongoDB Client, based on mongojs package, refactored and with Tenants support",
+  "version": "2.0.0",
+  "description": "This is a MongoDB Client, based on mongodb package, with pagination support",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
@@ -14,7 +14,8 @@
     "mongo",
     "mongodb",
     "client",
-    "mongojs"
+    "visiongroup",
+		"universal-pattern"
   ],
   "author": "César Casas",
   "license": "ISC",
@@ -23,20 +24,13 @@
   },
   "homepage": "https://github.com/visiongroupnyc/vg-mongo#readme",
   "dependencies": {
-    "async_hooks": "^1.0.0",
-    "each-series": "^1.0.0",
-    "mongodb": "^3.6.9",
-    "once": "^1.4.0",
-    "readable-stream": "^2.3.7",
-    "thunky": "^1.1.0"
+    "debug": "^4.3.4",
+    "mongodb": "^6.3.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
+    "@babel/eslint-parser": "^7.22.10",
     "eslint": "^7.28.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0",
     "mocha": "^9.0.0"
   }
 }
